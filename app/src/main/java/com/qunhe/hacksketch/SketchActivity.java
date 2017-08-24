@@ -3,7 +3,6 @@ package com.qunhe.hacksketch;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -31,10 +30,33 @@ public class SketchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sketch);
         mFrameLayout = (SketchBoardLayout) findViewById(R.id.content);
         addTopView();
+        mFrameLayout.setPenDraw(true);
+        findViewById(R.id.add_text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                mFrameLayout.removeViewAt(mFrameLayout.getChildCount() - 1);
+                TextSketchView textSketchView = new TextSketchView(SketchActivity.this);
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup
+                        .LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                textSketchView.setLayer(mFrameLayout.getChildCount());
+                textSketchView.setText("测试测试", R.color.colorPrimary);
+                mFrameLayout.addView(textSketchView, lp);
+                mFrameLayout.setPenDraw(false);
+            }
+        });
+        findViewById(R.id.pen).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                addTopView();
+                mFrameLayout.setPenDraw(true);
+            }
+        });
     }
 
+    private boolean addedTopView = false;
     private void addTopView() {
-        Log.e("pengtao", "addTopView " + mFrameLayout.getChildCount());
+        if (addedTopView) return;
+        addedTopView = true;
         LineSketchView lineSketchView = new LineSketchView(SketchActivity.this);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup
                 .LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -45,6 +67,7 @@ public class SketchActivity extends AppCompatActivity {
             @Override
             public void onSketchComplete(final LineSketchData data) {
                 mSketchData.add(data);
+                addedTopView = false;
                 addTopView();
             }
 

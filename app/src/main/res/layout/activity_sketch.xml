@@ -16,4 +16,15 @@
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+    <Button
+        android:id="@+id/add_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="text"/>
+    <Button
+        android:id="@+id/pen"
+        android:layout_gravity="right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="pen"/>
 </FrameLayout>

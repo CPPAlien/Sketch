@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -48,7 +49,6 @@ public class LineSketchView extends BaseSketchView<LineSketchData> {
     @Override
     public boolean onTouchEvent(final MotionEvent event) {
         // 第一次创建，并且未点击在其他sketch的区域上
-        Log.e("pengtao", "mIsFirstCreated = " + mIsFirstCreated);
         if (mIsFirstCreated) {
             float x = event.getRawX();
             float y = event.getRawY();
@@ -69,7 +69,8 @@ public class LineSketchView extends BaseSketchView<LineSketchData> {
                     if (mOnSketchListener != null) {
                         mOnSketchListener.onSketchComplete(mLineSketchData);
                     }
-                    mBitmap = getBitmap();
+                    RectF rectF = new RectF();
+                    mPath.computeBounds(rectF, false);
                     break;
                 default:
                     break;
@@ -82,14 +83,25 @@ public class LineSketchView extends BaseSketchView<LineSketchData> {
     }
 
     @Override
+    public boolean isValidArea(final MotionEvent event, int left, int top) {
+        int rX = (int) event.getX() - left;
+        int rY = (int) event.getY() - top;
+        Bitmap bitmap = getBitmap();
+        if (rX < 0 || rX > bitmap.getWidth() || rY < 0 || rY > bitmap.getHeight()) {
+            return false;
+        }
+        int color = bitmap.getPixel(rX, rY);
+        return color < 0;
+    }
+
+    @Override
     protected void onDraw(final Canvas canvas) {
         canvas.drawPath(mPath, mPaint);
         mLineSketchData.setPaint(mPaint);
         mLineSketchData.setPath(mPath);
     }
 
-    @Override
-    public Bitmap getBitmap() {
+    private Bitmap getBitmap() {
         int width = getRight() - getLeft();
         int height = getBottom() - getTop();
         final boolean opaque = getDrawingCacheBackgroundColor() != 0 || isOpaque();

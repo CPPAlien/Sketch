@@ -2,13 +2,11 @@ package com.qunhe.hacksketch;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.Px;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -24,7 +22,6 @@ public abstract class BaseSketchView<T extends BaseSketchData> extends View {
     private int mLeft;
     private int mTop;
     protected Paint mPaint = new Paint();
-    protected Bitmap mBitmap;
 
     public BaseSketchView(final Context context) {
         super(context);
@@ -66,11 +63,9 @@ public abstract class BaseSketchView<T extends BaseSketchData> extends View {
             case MotionEvent.ACTION_DOWN:
                 lastX = (int) event.getRawX();
                 lastY = (int) event.getRawY();
-                int color = mBitmap.getPixel((int) event.getX(), (int) event.getY());
-                Log.e("pengtao", "color = " + color);
-                isValid = color < 0;
-                Log.e("pengtao", "isValid = " + isValid);
-                if (isValid) {
+
+                isValid = isValidArea(event, mLeft, mTop);
+                if (isValid && mOnSketchListener != null) {
                     mOnSketchListener.onSketchTouched(mLayer);
                 }
                 break;
@@ -90,9 +85,6 @@ public abstract class BaseSketchView<T extends BaseSketchData> extends View {
                 lastY = (int) event.getRawY();
 
                 break;
-            case MotionEvent.ACTION_UP:
-                mBitmap = getBitmap();
-                break;
             default:
                 break;
         }
@@ -106,10 +98,8 @@ public abstract class BaseSketchView<T extends BaseSketchData> extends View {
         } else {
             super.layout(l, t, r, b);
         }
-        invalidate();
+        //invalidate();
     }
 
-    public Bitmap getBitmap() {
-        return null;
-    }
+    public abstract boolean isValidArea(MotionEvent event, int left, int top);
 }
