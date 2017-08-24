@@ -8,7 +8,12 @@
     android:background="#000000"
     tools:context="com.qunhe.hacksketch.SketchActivity">
     <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         fresco:placeholderImage="@drawable/test"/>
+    <com.qunhe.hacksketch.SketchBoardLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </FrameLayout>
